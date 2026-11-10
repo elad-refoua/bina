@@ -74,7 +74,7 @@ button{font-family:inherit}
 .cand.win .track i{background:var(--amber)}
 #stepper .btn{margin-top:14px}
 #go:hover{background:var(--amber);color:var(--bg)}
-@media(max-width:640px){#gridcap{font-size:10px}#explain{font-size:16px}#explain h2{font-size:28px}.cand{grid-template-columns:70px 1fr 64px}#hud{font-size:11px;left:12px;right:12px;top:10px}#hud .bar{display:none}#cap{top:40px}#bandcap{font-size:10px;padding:0 10px 0 84px;bottom:5px}#mute{bottom:4px;left:6px;font-size:10px;padding:3px 8px}}
+@media(max-width:640px){#intro{padding:16px 18px}#intro .in{gap:15px}#go{font-size:20px;padding:8px 34px}#gridcap{font-size:10px}#explain{font-size:16px}#explain h2{font-size:28px}.cand{grid-template-columns:70px 1fr 64px}#hud{font-size:11px;left:12px;right:12px;top:10px}#hud .bar{display:none}#cap{top:40px}#bandcap{font-size:10px;padding:0 10px 0 84px;bottom:5px}#mute{bottom:4px;left:6px;font-size:10px;padding:3px 8px}}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes blink{50%{opacity:0}}
 #doc{position:relative;z-index:3;max-width:43rem;margin:0 auto;padding:13vh 26px 6vh;opacity:0;transition:opacity 1.8s}
@@ -122,8 +122,8 @@ input[type=range]{width:100%;accent-color:var(--amber);direction:ltr}
 #deep{margin-top:76px;border-top:1px solid var(--line);padding-top:28px}
 #deep summary{cursor:pointer;font-family:var(--serif);font-size:25px;color:var(--amber);list-style:none}
 #deep summary::-webkit-details-marker{display:none}
-#deep summary::after{content:"  +";color:var(--dim)}
-#deep[open] summary::after{content:"  −"}
+#deep summary .t::after{content:"  +";color:var(--dim)}
+#deep[open] summary .t::after{content:"  −"}
 #deep summary small{display:block;font-family:var(--sans);font-size:14px;color:var(--dim);margin-top:4px}
 #deepBody{max-width:46em;font-size:16.5px;line-height:1.9;color:#d5ccbd;margin-top:6px}
 #deepBody h4{font-family:var(--serif);font-weight:500;font-size:22px;color:var(--ink);margin:46px 0 8px}
@@ -193,7 +193,7 @@ input[type=range]{width:100%;accent-color:var(--amber);direction:ltr}
   <textarea id="newText" placeholder="להדביק כאן טקסט, בין 100 ל-3,000 תווים"></textarea>
   <div><button class="btn" id="btnTeach">לאמן מודל חדש</button><button class="btn q" id="btnAgain">שוב, עם המכתב המקורי</button><label class="chk"><input type="checkbox" id="fullSpeed"> במהירות מלאה, בלי ההילוך האיטי</label><span id="teachMsg"></span></div>
 
-  <details id="deep"><summary>הסבר מעמיק: איך זה עובד, ומה זה מה<small>למי שרוצה לדעת מה בדיוק קורה בפנים. נפתח בלחיצה.</small></summary><div id="deepBody"></div></details>
+  <details id="deep"><summary><span class="t">הסבר מעמיק: איך זה עובד, ומה זה מה</span><small>למי שרוצה לדעת מה בדיוק קורה בפנים. נפתח בלחיצה.</small></summary><div id="deepBody"></div></details>
 </section>
 
 <script type="text/plain" id="letter">
