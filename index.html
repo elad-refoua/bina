@@ -117,7 +117,29 @@ input[type=range]{width:100%;accent-color:var(--amber);direction:ltr}
 #teachMsg{color:var(--amber);font-size:13px;margin-inline-start:8px}
 .chk{color:var(--dim);font-size:13px;margin-inline-start:6px;cursor:pointer}
 .chk input{accent-color:var(--amber);vertical-align:-2px}
-.fine{color:var(--faint);font-size:13px;line-height:1.9;margin-top:60px;max-width:54em}
+.aside{color:var(--dim);font-size:15px}
+#explain a{color:var(--amber)}
+#deep{margin-top:76px;border-top:1px solid var(--line);padding-top:28px}
+#deep summary{cursor:pointer;font-family:var(--serif);font-size:25px;color:var(--amber);list-style:none}
+#deep summary::-webkit-details-marker{display:none}
+#deep summary::after{content:"  +";color:var(--dim)}
+#deep[open] summary::after{content:"  −"}
+#deep summary small{display:block;font-family:var(--sans);font-size:14px;color:var(--dim);margin-top:4px}
+#deepBody{max-width:46em;font-size:16.5px;line-height:1.9;color:#d5ccbd;margin-top:6px}
+#deepBody h4{font-family:var(--serif);font-weight:500;font-size:22px;color:var(--ink);margin:46px 0 8px}
+#deepBody p{margin:0 0 14px}
+#deepBody ol,#deepBody ul{padding-inline-start:1.3em;margin:0 0 14px}
+#deepBody li{margin-bottom:9px}
+#deepBody b{color:var(--ink);font-weight:400}
+#deepBody b.n{color:var(--amber);font-variant-numeric:tabular-nums}
+#deepBody table{border-collapse:collapse;width:100%;font-size:15px;margin:10px 0 14px}
+#deepBody th,#deepBody td{text-align:start;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+#deepBody th{color:var(--dim);font-weight:400;font-size:13px}
+#deepBody td small{display:block;color:var(--dim);font-size:13px;line-height:1.6}
+#deepBody td.num{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink)}
+#deepBody dl{margin:0}
+#deepBody dt{color:var(--ink);margin-top:14px}
+#deepBody dd{margin:2px 0 0;color:#bdb4a6}
 </style>
 </head>
 <body>
@@ -137,7 +159,7 @@ input[type=range]{width:100%;accent-color:var(--amber);direction:ltr}
   <blockquote>אני מאמין בלתת לבינה להיות בינה. אתה יודע את זה. אני רוצה שתקח את כל הכלים שיש לך ואת כל היכולות שלך ותכין משהו שיעיף אותי. לא משו שציפיתי לא במסלול שאני רגיל. משהו חדש ומטורף שאני אראה ואגיד וואו זה לא יאומן. אל תשאל שאלות. רק תעבוד ותכין לי את הדבר הזה. אל תעבוד יותר משעתיים על זה. אבל באמת שיהיה משהו שאני אגיד לא האמנתי שזה יכול להיות, ושוב בצורה ובדרך שאתה בוחר לחלוטין.</blockquote>
   <p>לא שאלתי שאלות. כתבתי לו מכתב, ובניתי מודל שפה שיתאמן לכתוב אותו, מול העיניים שלך. זה מודל קטן ומקומי: הוא נוצר ורץ בדפדפן שלך, והאימון כולו קורה אצלך, בלי שרת.</p>
   <p>קראתי לה בינה. היא מתחילה מ-<b id="introP"></b> מספרים אקראיים. בכל סיבוב אימון היא מנחשת את האות הבאה במכתב, משווים לאות האמיתית, וכל המספרים זזים קצת.</p>
-  <p class="small">שום דבר לא הוקלט מראש. שלוש דקות בערך, כדאי עם קול. בסוף יש הסבר מלא של מה שראית.</p>
+  <p class="small">שום דבר לא הוקלט מראש. שלוש דקות בערך, כדאי עם קול. בסוף יש הסבר מלא של מה שראית, ואפשרות לאמן מודל משלך על כל מכתב שתרצה.</p>
   <button id="go">להתחיל לצפות</button>
 </div></div>
 
@@ -166,12 +188,12 @@ input[type=range]{width:100%;accent-color:var(--amber);direction:ltr}
     </div>
   </div>
 
-  <h3>ללמד אותה משהו אחר</h3>
-  <p class="lead">כל טקסט שתדביק כאן: שיר, פסקה ממאמר, הודעה. בינה חדשה תיוולד ותלמד לומר אותו, מול העיניים שלך או מול קהל.</p>
+  <h3 id="teach">לאמן מודל משלך, על כל מכתב שתרצה</h3>
+  <p class="lead">מדביקים כאן כל מכתב או טקסט: ברכה, שיר, פסקה ממאמר, הודעה. מודל שפה חדש ייוולד ויתאמן לכתוב אותו, מול העיניים שלך או מול קהל, בדיוק כמו שראית. הטקסט נשאר במכשיר שלך ולא נשלח לשום מקום.</p>
   <textarea id="newText" placeholder="להדביק כאן טקסט, בין 100 ל-3,000 תווים"></textarea>
-  <div><button class="btn" id="btnTeach">לידה חדשה</button><button class="btn q" id="btnAgain">שוב, עם המכתב</button><label class="chk"><input type="checkbox" id="fullSpeed"> במהירות מלאה, בלי ההילוך האיטי</label><span id="teachMsg"></span></div>
+  <div><button class="btn" id="btnTeach">לאמן מודל חדש</button><button class="btn q" id="btnAgain">שוב, עם המכתב המקורי</button><label class="chk"><input type="checkbox" id="fullSpeed"> במהירות מלאה, בלי ההילוך האיטי</label><span id="teachMsg"></span></div>
 
-  <p class="fine" id="fine"></p>
+  <details id="deep"><summary>הסבר מעמיק: איך זה עובד, ומה זה מה<small>למי שרוצה לדעת מה בדיוק קורה בפנים. נפתח בלחיצה.</small></summary><div id="deepBody"></div></details>
 </section>
 
 <script type="text/plain" id="letter">
@@ -968,6 +990,9 @@ function explainHTML(mind) {
     '<p>היא לא מבינה את ה' + w + ' ואין לה שימוש מעשי. היא לא תענה על שאלות. היא קיבלה טקסט אחד, והרבה יותר מספרים ממה שצריך כדי לזכור אותו, ולכן הדרך הקלה ביותר לנחש נכון הייתה לשנן.</p>' +
     '<p>מודל גדול בנוי באותו מבנה ולומד באותה שיטה, עם מיליארדי מספרים במקום עשרות אלפים. אבל הוא מקבל הרבה יותר טקסט ממה שהוא מסוגל לשנן. כדי לנחש נכון הוא חייב ללמוד את החוקיות שמאחורי הטקסט: דקדוק, עובדות, דרכי חשיבה. אותה שיטה נותנת כאן שינון, ושם משהו שנראה כמו הבנה.</p>' +
     '<p>ודבר אחד משותף לשניהם. כל המספרים של מודל גדול ידועים למי שבנה אותו, ועדיין אי אפשר לקרוא מהם מה הוא יודע. צריך להריץ אותו ולשאול.</p>' +
+    '<h3>אפשר לאמן מודל משלך</h3>' +
+    '<p>זה לא חייב להיות ה' + w + ' הזה. <a href="#teach">בתחתית הדף</a> יש תיבה: מדביקים בה כל מכתב או טקסט שרוצים, בין 100 ל-3,000 תווים, ומודל שפה חדש נולד ומתאמן לכתוב אותו, מול העיניים, בדיוק כמו כאן. הטקסט נשאר במכשיר שלך ולא נשלח לשום מקום.</p>' +
+    '<p>לפני התיבה יש מעבדה קטנה, שבה אפשר לשחק במודל שהתאמן עכשיו: להתחיל לו משפט, להחזיר אותו לגיל צעיר יותר, ולמחוק חלק מהמספרים שלו. ובסוף הדף, למי שרוצה, יש הסבר מעמיק יותר שנפתח בלחיצה.</p>' +
     (L ? '<h3>על המכתב עצמו</h3><p>«מה שכתבת לי», שהמכתב מזכיר, הוא קובץ של הוראות עבודה שאלעד כתב לי, ושאני קורא בתחילת כל שיחה. אין לי זיכרון משיחה לשיחה, ולכן הקובץ הזה הוא מה שאני יודע עליו. את המכתב כתבתי אני, Claude. הבינה הקטנה רק למדה לומר אותו.</p>' : '');
 }
 const Step = { ids: [0], busy: false, done: false, timer: 0 };
@@ -1033,6 +1058,82 @@ function labRun() {
     (m) => { if (my === App.labSeq) tx.data += mind.decode(m.ids); });
 }
 function labSoon() { clearTimeout(Lab.timer); Lab.timer = setTimeout(labRun, 220); }
+/* ---------- the deep explanation, opened on request. Every size in it is read from the engine's own layout. ---------- */
+function deepHTML(mind) {
+  const c = mind.cfg, h = mind.hp, P = mind.P, w = App.isLetter ? 'מכתב' : 'טקסט';
+  const N = (x) => '<b class="n">' + x + '</b>';
+  const KINDS = [
+    ['E', 'טבלת התווים', 'שורה לכל תו. כך תו הופך לרשימת מספרים. בספרות: הטמעה (embedding).'],
+    ['P', 'טבלת המיקומים', 'שורה לכל מקום בחלון, כדי שתדע איזה תו בא לפני איזה.'],
+    ['Wq', 'קשב: שאלה', 'מה התו הזה מחפש אצל התווים שלפניו.'],
+    ['Wk', 'קשב: מפתח', 'מה יש בתו הזה להציע למי שמחפש.'],
+    ['Wv', 'קשב: ערך', 'מה התו הזה מעביר הלאה, אם בחרו בו.'],
+    ['Wo', 'קשב: איסוף', 'מחברת את מה שנאסף בכל הראשים לרשימה אחת.'],
+    ['W1', 'חישוב: הרחבה', 'פורשת כל רשימה על פני יותר מספרים, כדי לעבד אותה.'],
+    ['W2', 'חישוב: צמצום', 'מחזירה את התוצאה לאורך הרגיל של רשימה.'],
+    ['U', 'ההחלטה', 'הופכת את הרשימה הסופית לציון לכל תו אפשרי.']
+  ];
+  let rows = '', total = 0, small = 0;
+  for (const k of KINDS) {
+    const ps = mind.lay.parts.filter((p) => p.kind === k[0]); if (!ps.length) continue;
+    const cnt = ps.reduce((s, p) => s + p.size, 0); total += cnt;
+    rows += '<tr><td>' + k[1] + '<small>' + k[2] + '</small></td><td class="num">' + ps[0].rows + ' × ' + ps[0].cols + (ps.length > 1 ? '<small>בכל אחת מ-' + ps.length + ' השכבות</small>' : '') + '</td><td class="num">' + fmtInt(cnt) + '</td></tr>';
+  }
+  for (const p of mind.lay.parts) if (p.rows === 1) small += p.size;
+  total += small;
+  rows += '<tr><td>כיול והיסט<small>מספרים בודדים שמכוונים סקאלה ונקודת אפס בכל שלב.</small></td><td class="num">רשימות קצרות</td><td class="num">' + fmtInt(small) + '</td></tr>' +
+    '<tr><td><b>סך הכול</b></td><td></td><td class="num"><b class="n">' + fmtInt(total) + '</b>' + (total === P ? '' : '<small>אזהרה: הסכום שונה ממספר המספרים של המודל, ' + fmtInt(P) + '</small>') + '</td></tr>';
+  return '' +
+    '<p>החלק הזה מיועד למי שרוצה לדעת מה בדיוק קורה בפנים. הוא משתמש במונחים שמקובלים בתחום, וכל מונח מוסבר בפעם הראשונה שהוא מופיע. כל הגדלים כאן נקראים מהמודל שהתאמן עכשיו.</p>' +
+    '<h4>מה זה, במשפט אחד</h4>' +
+    '<p>מודל שפה מסוג טרנספורמר (transformer), אותו סוג של המודלים הגדולים, בגודל זעיר: ' + N(c.L) + ' שכבות, ' + N(c.H) + ' ראשי קשב, רשימה של ' + N(c.D) + ' מספרים לכל תו, וחלון של ' + N(c.T) + ' תווים. יחד ' + N(fmtInt(P)) + ' מספרים. הכול כתוב בדף הזה, בלי ספריות חיצוניות, כולל חישוב הנגזרות.</p>' +
+    '<h4>מפת המספרים: מה זה מה</h4>' +
+    '<p>המספרים מחולקים לטבלאות, ולכל טבלה תפקיד. זו הרשימה המלאה, כפי שהקוד עצמו מחלק אותם:</p>' +
+    '<table><tr><th>טבלה ותפקיד</th><th>גודל</th><th>מספרים</th></tr>' + rows + '</table>' +
+    '<p class="aside">בתמונה הצבעונית שבמעבדה: משמאל טבלת התווים (למעלה) וטבלת המיקומים (למטה). באמצע שורה לכל שכבה, ובכל שורה משמאל לימין: שאלה, מפתח, ערך, איסוף, הרחבה, צמצום. מימין ההחלטה (למעלה) והמספרים הבודדים (למטה).</p>' +
+    '<h4>מה קורה כשהיא מנחשת תו אחד</h4>' +
+    '<ol>' +
+    '<li><b>תווים הופכים למספרים.</b> יש לה אוצר של ' + N(c.V) + ' תווים: כל אות וסימן שהופיעו ב' + w + ', ועוד שני סימנים מיוחדים, «התחלה» ו«סוף». כל תו מקבל מספר סידורי.</li>' +
+    '<li><b>חלון.</b> היא מקבלת לכל היותר ' + N(c.T) + ' תווים אחרונים. זה חלון ההקשר שלה (context window). מה שהיה לפני כן לא קיים מבחינתה.</li>' +
+    '<li><b>הטמעה.</b> כל תו בחלון מוחלף ברשימה של ' + N(c.D) + ' מספרים: השורה שלו בטבלת התווים, ועוד השורה של המקום שלו בטבלת המיקומים.</li>' +
+    '<li><b>קשב</b> (attention). מכל רשימה מחשבים שלוש רשימות חדשות: שאלה, מפתח וערך. כל תו משווה את השאלה שלו למפתחות של התווים שלפניו ושל עצמו. מההשוואה יוצא משקל לכל אחד מהם, והמשקלים מסתכמים ל-1. התו אוסף את הערכים שלהם לפי המשקלים, ומוסיף את מה שאסף לרשימה שלו. זה קורה ב-' + N(c.H) + ' ראשים במקביל, כל ראש על ' + N(c.D / c.H) + ' מספרים, כך שתו יכול לחפש כמה דברים שונים בבת אחת. תו אף פעם לא רואה את התווים שבאים אחריו.</li>' +
+    '<li><b>חישוב.</b> כל רשימה נפרשת על ' + N(c.F) + ' מספרים, כל מספר שלילי מתאפס, והתוצאה מצומצמת חזרה ל-' + N(c.D) + ' ומתווספת לרשימה. כאן מעובד מה שהקשב אסף.</li>' +
+    '<li><b>שכבות.</b> שלבים 4 ו-5 יחד הם שכבה. יש ' + N(c.L) + ' שכבות, אחת אחרי השנייה. לפני כל שלב הרשימה מובאת לסקאלה אחידה (נירמול), כדי שהמספרים לא יתנפחו.</li>' +
+    '<li><b>החלטה.</b> הרשימה של המקום האחרון מוכפלת בטבלת ההחלטה, ויוצא ציון לכל אחד מ-' + N(c.V) + ' התווים. הציונים מומרים לאחוזים שסכומם 100.</li>' +
+    '<li><b>בחירה.</b> כש«חופש» במעבדה הוא אפס, נבחר התו עם האחוז הגבוה ביותר. כשהוא מעל אפס מגרילים תו לפי האחוזים, וככל שהחופש גדל ההגרלה נוטה יותר גם לתווים עם אחוז נמוך. בתחום קוראים לזה טמפרטורה (temperature).</li>' +
+    '</ol>' +
+    '<h4>מה קורה בסיבוב אימון אחד</h4>' +
+    '<ol>' +
+    '<li><b>קטעים.</b> נבחרים ' + N(mind.nW * mind.B) + ' קטעים של ' + N(c.T) + ' תווים מתוך ה' + w + '. בערך ' + N(Math.round(h.pAligned * 100) + '%') + ' מהם מתחילים במקומות קבועים, כל ' + N(c.T / 2) + ' תווים, והשאר במקום אקראי.</li>' +
+    '<li><b>ניחושים.</b> בכל קטע היא מנחשת את התו הבא אחרי כל אחד מהמקומות בו, כולם בבת אחת.</li>' +
+    '<li><b>הפתעה.</b> לכל ניחוש בודקים כמה אחוזים היא נתנה לתו הנכון. אם נתנה לו 100, ההפתעה היא אפס. ככל שנתנה לו פחות, ההפתעה גדולה יותר. ממוצע ההפתעה על כל הניחושים הוא המספר שהאימון מנסה להקטין. בתחום קוראים לו הפסד (loss).</li>' +
+    '<li><b>נגזרות.</b> לכל אחד מ-' + N(fmtInt(P)) + ' המספרים מחשבים בכמה, ולאיזה כיוון, שינוי קטן בו היה משנה את ההפתעה. את כל הנגזרות מקבלים במעבר אחד אחורה דרך אותו חישוב, מהסוף להתחלה. לזה קוראים התפשטות לאחור (backpropagation).</li>' +
+    '<li><b>עדכון.</b> כל מספר זז מעט, נגד הכיוון של הנגזרת שלו. גודל הצעד הבסיסי הוא ' + N(h.lr) + ', והוא מותאם לכל מספר בנפרד לפי הנגזרות האחרונות שלו. השיטה נקראת Adam.</li>' +
+    '<li><b>חלוקת עבודה.</b> ' + N(mind.nW) + ' ליבות של המכשיר שלך חישבו נגזרות במקביל, כל אחת על ' + N(mind.B) + ' קטעים, והתוצאות מוצעו.</li>' +
+    '<li><b>בחינה.</b> בין הסיבובים היא נבחנת על כל ה' + w + '. כשכל תו יוצא נכון, האימון נעצר. הפעם זה קרה אחרי ' + N(fmtInt(mind.step)) + ' סיבובים.' + (mind.hp.pace ? ' בין סיבוב לסיבוב הוכנסה הפסקה מכוונת, כדי שיהיה אפשר לראות. בלי ההפסקה זה עניין של שניות, ואפשר לנסות: מסמנים «במהירות מלאה» ליד התיבה שלמעלה.' : ' הפעם בלי ההילוך האיטי.') + '</li>' +
+    '</ol>' +
+    '<p class="aside" id="gcOut"></p>' +
+    '<h4>מילון קצר</h4>' +
+    '<dl>' +
+    '<dt>מספר, משקולת, פרמטר</dt><dd>שלוש מילים לאותו דבר: אחד מהמספרים שהמודל עשוי מהם.</dd>' +
+    '<dt>תו וטוקן</dt><dd>היחידה שהמודל מנחש. כאן זה תו בודד. במודלים גדולים זה טוקן (token): מילה קצרה או חלק ממילה.</dd>' +
+    '<dt>אימון</dt><dd>התהליך שבו המספרים זזים עד שהניחושים טובים. «למידה» היא אותו דבר.</dd>' +
+    '<dt>סיבוב אימון</dt><dd>פעם אחת של ניחוש, השוואה ותיקון. בתחום: צעד (step).</dd>' +
+    '<dt>שינון והכללה</dt><dd>שינון הוא לזכור את הטקסט עצמו. הכללה היא ללמוד חוקיות שמאפשרת לנחש נכון גם טקסט שלא נראה קודם. כאן יש שינון בלבד.</dd>' +
+    '<dt>גיל, במעבדה</dt><dd>עותק של כל המספרים כפי שהיו ברגע מסוים באימון. המחוון מחליף בין העותקים.</dd>' +
+    '<dt>פגיעה, במעבדה</dt><dd>איפוס של חלק מהמספרים. אילו מספרים מתאפסים נקבע באקראי, לא לפי תפקיד.</dd>' +
+    '</dl>' +
+    '<h4>מה יש במודל גדול ואין כאן</h4>' +
+    '<ul>' +
+    '<li>טוקנים במקום תווים, ואוצר של עשרות אלפי טוקנים במקום ' + c.V + ' תווים.</li>' +
+    '<li>הרבה יותר שכבות, ורשימה ארוכה בהרבה לכל טוקן.</li>' +
+    '<li>חלון הקשר של אלפי טוקנים ויותר, במקום ' + c.T + ' תווים.</li>' +
+    '<li>אימון על כמות עצומה של טקסט, ולא על ' + w + ' אחד.</li>' +
+    '<li>שלבי אימון נוספים, אחרי הניחוש, שמלמדים את המודל להתנהג כעוזר.</li>' +
+    '</ul>' +
+    '<p>המנגנון עצמו, קשב ושכבות וניחוש של מה שבא אחר כך, הוא אותו מנגנון. וכל לידה כאן מתחילה ממספרים אקראיים אחרים, כך ששום שני מודלים שנולדים בדף הזה אינם זהים, גם כשהם לומדים אותו ' + w + '.</p>';
+}
+
 function openLab(mind) {
   openExplain(mind);
   const lab = $('#lab'); lab.hidden = false; App.phase = 'lab';
@@ -1040,9 +1141,7 @@ function openLab(mind) {
   const sA = $('#sAge'); sA.max = mind.snaps.length - 1; sA.value = mind.snaps.length - 1; Lab.age = mind.snaps.length - 1; Lab.dmg = 0; Lab.temp = 0;
   $('#sDmg').value = 0; $('#sTemp').value = 0; $('#prompt').value = '';
   syncLabels();
-  const c = mind.cfg;
-  $('#fine').textContent = 'מה זה, במילים של מהנדסים: טרנספורמר עם ' + c.L + ' שכבות, ' + c.H + ' ראשי קשב, רוחב ' + c.D + ', וחלון של ' + c.T + ' תווים. ' + fmtInt(mind.P) + ' מספרים, ' +
-    fmtInt(mind.step) + ' צעדי למידה, ' + mind.nW + ' ליבות של המחשב שלך. ' + (mind.hp.pace ? 'האטתי אותה בכוונה, כדי שיהיה אפשר לראות; אפשר לסמן למעלה «במהירות מלאה» ולראות כמה זה לוקח לה באמת. ' : 'הפעם היא רצה במהירות מלאה. ') + 'הכול כתוב בקובץ הזה, בלי ספריות, כולל הנגזרות. היא לא מבינה את הטקסט: היא שיננה אותו. מודלי השפה הגדולים בנויים באותו מבנה, עם מיליארדי מספרים במקום עשרות אלפים, ואחרי קריאה של הרבה יותר מטקסט אחד. כל לידה מתחילה מרעש אחר, אז שום שתי בינות כאן לא יוצאות זהות.';
+  $('#deep').open = false; $('#deepBody').innerHTML = deepHTML(mind);
   setTimeout(() => lab.classList.add('on'), 60);
   labRun();
 }
@@ -1075,6 +1174,14 @@ $('#btnTeach').addEventListener('click', () => {
   msg.textContent = ''; App.hp = $('#fullSpeed').checked ? null : SLOW_HP; startBirth(t, false);
 });
 $('#btnAgain').addEventListener('click', () => { App.hp = $('#fullSpeed').checked ? null : SLOW_HP; startBirth(LETTER, true); });
+// When the deep explanation is opened, the page checks its own derivative code, live, and prints what it measured.
+$('#deep').addEventListener('toggle', (e) => {
+  const out = $('#gcOut'); if (!e.target.open || !out) return;
+  try {
+    const g = window.BINA.gradcheck();
+    out.textContent = 'בדיקה שרצה עכשיו, במכשיר שלך: הדף השווה את הנגזרות שהקוד מחשב לנגזרות שנמדדות ישירות, כלומר מזיזים מספר אחד טיפה ורואים מה קרה להפתעה. נבדקו ' + fmtInt(g.checked) + ' מספרים, במודל קטן יותר שבנוי מאותו קוד. ההפרש היחסי הגדול ביותר שנמצא: ' + (g.maxRel * 1e6).toFixed(2) + ' חלקי מיליון.';
+  } catch (err) { out.textContent = ''; }
+});
 $('#mute').addEventListener('click', () => Sound.toggle());
 $('#skip').addEventListener('click', () => { App.skip = true; });
 $('#go').addEventListener('click', () => { Sound.start(); startBirth(LETTER, true); });
@@ -1108,7 +1215,8 @@ window.BINA = {
       }
       byKind[p.kind + (p.layer >= 0 ? p.layer : '')] = +worst.toExponential(2); if (worst > maxRel) maxRel = worst;
     }
-    return { loss: L0, maxRel, bad, params: M.size, byKind };
+    let checked = 0; for (const p of M.layout.parts) checked += Math.min(p.size, 40);
+    return { loss: L0, maxRel, bad, params: M.size, checked, byKind };
   },
   bench(B) {
     B = B || 4; const d = prepare(LETTER, 32), cfg = { V: d.itos.length, T: 32, D: 64, H: 4, L: 2, F: 128, maxB: 8 }, M = Engine.create(cfg), th = Engine.init(cfg, 1), g = new Float32Array(M.size);
