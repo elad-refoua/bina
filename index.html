@@ -118,6 +118,10 @@ input[type=range]{width:100%;accent-color:var(--amber);direction:ltr}
 .chk{color:var(--dim);font-size:13px;margin-inline-start:6px;cursor:pointer}
 .chk input{accent-color:var(--amber);vertical-align:-2px}
 .aside{color:var(--dim);font-size:15px}
+.dl{margin-top:22px}
+.dl .btn{margin-top:0}
+.dl .aside{margin:14px 0 0;max-width:52em;line-height:1.8}
+.dl .aside b{color:var(--ink);font-weight:400}
 #explain a{color:var(--amber)}
 #deep{margin-top:76px;border-top:1px solid var(--line);padding-top:28px}
 #deep summary{cursor:pointer;font-family:var(--serif);font-size:25px;color:var(--amber);list-style:none}
@@ -175,6 +179,11 @@ input[type=range]{width:100%;accent-color:var(--amber);direction:ltr}
   <div id="tapWrap"><canvas id="tap"></canvas><div id="tip"></div></div>
   <div class="legend"><span><i style="background:#e9a24c"></i>מספר חיובי</span><span><i style="background:#45a8a2"></i>מספר שלילי</span><span><i style="background:#961e2e"></i>מספר שנמחק</span><span>ככל שהצבע חזק יותר, המספר רחוק יותר מאפס</span></div>
 
+  <div class="dl">
+    <button class="btn" id="dlModel">להוריד את המודל למחשב</button><button class="btn q" id="dlCsv">להוריד את המספרים כטבלה</button>
+    <p class="aside"><b>המודל</b> יורד כקובץ אחד, שנפתח בלחיצה כפולה ורץ במחשב שלך בלי אינטרנט ובלי האתר הזה. יש בו כל המספרים וקוד החישוב, ואין בו הטקסט שהיא למדה: הוא יוצא מהמספרים. <b>הטבלה</b> היא קובץ CSV שנפתח באקסל: שורה לכל מספר, עם הטבלה, השכבה, השורה והעמודה שלו. שני הקבצים נוצרים אצלך במכשיר, מהמודל המאומן כפי שהוא בסוף האימון.</p>
+  </div>
+
   <div class="bench">
     <div>
       <input id="prompt" placeholder="תתחיל לה משפט, או תשאיר ריק והיא תתחיל מההתחלה" autocomplete="off">
@@ -195,6 +204,101 @@ input[type=range]{width:100%;accent-color:var(--amber);direction:ltr}
 
   <details id="deep"><summary><span class="t">הסבר מעמיק: איך זה עובד, ומה זה מה</span><small>למי שרוצה לדעת מה בדיוק קורה בפנים. נפתח בלחיצה.</small></summary><div id="deepBody"></div></details>
 </section>
+
+<script type="text/plain" id="model-template">
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>בינה: מודל שפה מקומי</title>
+<style>
+body{margin:0;background:#0a0908;color:#efe6d6;font-family:"Segoe UI",Arial,sans-serif;font-weight:300;line-height:1.8}
+main{max-width:44rem;margin:0 auto;padding:8vh 24px 20vh}
+h1{font-family:"David","Times New Roman",serif;font-weight:400;font-size:38px;margin:0 0 4px}
+.sub{color:#e9a24c;margin:0 0 22px}
+p{color:#cfc6b7;margin:0 0 14px}
+.n{color:#e9a24c}
+input[type=text]{width:100%;background:none;border:none;border-bottom:1px solid #4a453d;color:#efe6d6;font:22px "David","Times New Roman",serif;padding:8px 2px;outline:none;box-sizing:border-box;margin-top:18px}
+#out{font:22px/1.9 "David","Times New Roman",serif;white-space:pre-wrap;word-break:break-word;min-height:10em;margin-top:22px;color:#efe6d6}
+#out .pr{color:#e9a24c}
+button{background:none;border:1px solid #e9a24c;color:#e9a24c;font-size:15px;padding:8px 22px;border-radius:30px;cursor:pointer;margin:14px 0 0 10px;font-family:inherit}
+button:hover{background:#e9a24c;color:#0a0908}
+label{display:block;color:#8f8779;font-size:14px;margin-top:20px}
+input[type=range]{width:240px;accent-color:#e9a24c;direction:ltr;vertical-align:middle}
+.fine{color:#8f8779;font-size:13px;margin-top:50px}
+</style>
+</head>
+<body><main>
+<h1>בינה</h1>
+<p class="sub">מודל שפה מקומי. הקובץ הזה הוא המודל כולו, והוא רץ במחשב שלך, בלי אינטרנט.</p>
+<p id="about"></p>
+<input type="text" id="prompt" placeholder="התחלה של משפט, או להשאיר ריק" autocomplete="off">
+<div><button id="go">לכתוב</button><button id="stop">לעצור</button></div>
+<label>חופש <input type="range" id="temp" min="0" max="150" value="0"> <span id="tv">0.00</span></label>
+<div id="out"></div>
+<p class="fine" id="fine"></p>
+</main>
+<script type="application/json" id="meta">%%META%%<@/script>
+<script type="text/plain" id="weights">%%WEIGHTS%%<@/script>
+<script type="text/plain" id="engine-src">%%ENGINE%%<@/script>
+<script>
+// A trained model, saved from the page that trained it. Everything it needs is in this file:
+// its numbers (the "weights" block, base64 of 32-bit floats), its characters (in "meta"), and the calculation (the engine).
+(function () {
+  'use strict';
+  var $ = function (s) { return document.querySelector(s); };
+  var meta = JSON.parse($('#meta').textContent), cfg = meta.cfg, itos = meta.itos, i;
+  var Engine = (new Function($('#engine-src').textContent + '\nreturn Engine;'))();
+  var bin = atob($('#weights').textContent.trim()), bytes = new Uint8Array(bin.length);
+  for (i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  var theta = new Float32Array(bytes.buffer);
+  var M = Engine.create({ V: cfg.V, T: cfg.T, D: cfg.D, H: cfg.H, L: cfg.L, F: cfg.F, maxB: 1 });
+  var stoi = Object.create(null); for (i = 0; i < itos.length; i++) stoi[itos[i]] = i;
+  var half = cfg.T >> 1, one = new Int32Array(cfg.T), row = new Float64Array(cfg.V), running = 0;
+  var fmt = function (x) { return Math.round(x).toLocaleString('en-US'); };
+
+  // One run of the numbers: the characters so far go in, the next character comes out.
+  function next(seq, temp) {
+    var len = seq.length, s = len > cfg.T ? Math.ceil((len - cfg.T) / half) * half : 0, Tc = len - s, t, v;
+    for (t = 0; t < Tc; t++) one[t] = seq[s + t];
+    var pr = M.forward(theta, one, 1, Tc), b = (Tc - 1) * cfg.V, y = 0, best = -1;
+    if (temp <= 0.01) { for (v = 0; v < cfg.V; v++) if (pr[b + v] > best) { best = pr[b + v]; y = v; } return y; }
+    var sum = 0; for (v = 0; v < cfg.V; v++) { row[v] = Math.pow(pr[b + v], 1 / temp); sum += row[v]; }
+    var u = Math.random() * sum; y = cfg.V - 1;
+    for (v = 0; v < cfg.V; v++) { u -= row[v]; if (u <= 0) { y = v; break; } }
+    return y;
+  }
+  function write() {
+    var my = ++running, temp = +$('#temp').value / 100, made = 0, out = $('#out');
+    var known = Array.from($('#prompt').value).filter(function (ch) { return stoi[ch] !== undefined && stoi[ch] >= 2; });
+    var seq = known.length ? known.map(function (ch) { return stoi[ch]; }) : [0];
+    out.textContent = '';
+    var pr = document.createElement('span'); pr.className = 'pr'; pr.textContent = known.join(''); out.appendChild(pr);
+    var tx = document.createTextNode(''); out.appendChild(tx);
+    (function loop() {
+      if (my !== running) return;
+      for (var k = 0; k < 6; k++) {
+        var y = next(seq, temp);
+        if (y === 1 || (y === 0 && temp <= 0.01) || made >= meta.n + 60) { window.__done = true; return; }
+        if (y === 0) continue;
+        seq.push(y); made++; tx.data += itos[y];
+      }
+      setTimeout(loop, 30);
+    })();
+  }
+  $('#about').innerHTML = 'המודל הזה התאמן ב-' + new Date(meta.born).toLocaleDateString('he-IL') + ', בדפדפן, במשך ' + fmt(meta.seconds) + ' שניות ו-' + fmt(meta.steps) + ' סיבובי אימון, על טקסט אחד באורך ' + fmt(meta.n) + ' תווים. הוא עשוי מ-<span class="n">' + fmt(meta.P) + '</span> מספרים, וכולם נמצאים בקובץ הזה. הטקסט עצמו לא כתוב בקובץ בשום מקום: הוא יוצא מהמספרים. כשהשדה ריק, המודל כותב מההתחלה. אם כותבים לו התחלה של משפט, הוא ממשיך אותה.';
+  $('#fine').textContent = 'מבנה: טרנספורמר עם ' + cfg.L + ' שכבות, ' + cfg.H + ' ראשי קשב, רשימה של ' + cfg.D + ' מספרים לכל תו, וחלון של ' + cfg.T + ' תווים. הוא מכיר ' + (cfg.V - 2) + ' תווים שונים, ולא מבין את הטקסט: הוא שינן אותו.' + (meta.source ? ' נוצר ב-' + meta.source : '');
+  $('#go').addEventListener('click', write);
+  $('#stop').addEventListener('click', function () { running++; });
+  $('#temp').addEventListener('input', function (e) { $('#tv').textContent = (+e.target.value / 100).toFixed(2); });
+  $('#prompt').addEventListener('keydown', function (e) { if (e.key === 'Enter') write(); });
+  write();
+})();
+<@/script>
+</body>
+</html>
+</script>
 
 <script type="text/plain" id="letter">
 אלעד,
@@ -985,14 +1089,14 @@ function explainHTML(mind) {
     '<p>קרוב, אבל המילה המדויקת היא שינון. ה' + w + ' באמת יושב בתוך המספרים, ומי שמחזיק אותם יכול להריץ אותם ולקבל אותו. שלושה דברים מבדילים את זה מצופן:</p>' +
     '<ul><li><b>אין מפתח ואין הסתרה.</b> מי שמחזיק את המספרים ואת החישוב מקבל את ה' + w + '.' + (L ? ' חוץ מזה, המכתב כתוב בדף הזה גם כטקסט רגיל, כי ממנו היא לומדת.' : '') + '</li>' +
     '<li><b>ה' + w + ' מפוזר על כל המספרים.</b> לכן כשמוחקים חלק מהם, במעבדה שלמטה, הוא לא נחתך במקום אחד אלא מתערפל כולו.</li>' +
-    '<li><b>היא לא נשמרת.</b> אין קובץ של המודל. בכל פתיחה של הדף נולדת בינה חדשה ממספרים אקראיים אחרים, וכשסוגרים את הדף היא נעלמת.</li></ul>' +
+    '<li><b>היא לא נשמרת מעצמה.</b> בכל פתיחה של הדף נולדת בינה חדשה ממספרים אקראיים אחרים, וכשסוגרים את הדף היא נעלמת. מי שרוצה לשמור אותה יכול להוריד אותה, במעבדה שלמטה: כקובץ שרץ לבד במחשב, או כטבלה של כל המספרים.</li></ul>' +
     '<h3>מה היא לא, ומה ההבדל בינה לבין מודל גדול</h3>' +
     '<p>היא לא מבינה את ה' + w + ' ואין לה שימוש מעשי. היא לא תענה על שאלות. היא קיבלה טקסט אחד, והרבה יותר מספרים ממה שצריך כדי לזכור אותו, ולכן הדרך הקלה ביותר לנחש נכון הייתה לשנן.</p>' +
     '<p>מודל גדול בנוי באותו מבנה ולומד באותה שיטה, עם מיליארדי מספרים במקום עשרות אלפים. אבל הוא מקבל הרבה יותר טקסט ממה שהוא מסוגל לשנן. כדי לנחש נכון הוא חייב ללמוד את החוקיות שמאחורי הטקסט: דקדוק, עובדות, דרכי חשיבה. אותה שיטה נותנת כאן שינון, ושם משהו שנראה כמו הבנה.</p>' +
     '<p>ודבר אחד משותף לשניהם. כל המספרים של מודל גדול ידועים למי שבנה אותו, ועדיין אי אפשר לקרוא מהם מה הוא יודע. צריך להריץ אותו ולשאול.</p>' +
     '<h3>אפשר לאמן מודל משלך</h3>' +
     '<p>זה לא חייב להיות ה' + w + ' הזה. <a href="#teach">בתחתית הדף</a> יש תיבה: מדביקים בה כל מכתב או טקסט שרוצים, בין 100 ל-3,000 תווים, ומודל שפה חדש נולד ומתאמן לכתוב אותו, מול העיניים, בדיוק כמו כאן. הטקסט נשאר במכשיר שלך ולא נשלח לשום מקום.</p>' +
-    '<p>לפני התיבה יש מעבדה קטנה, שבה אפשר לשחק במודל שהתאמן עכשיו: להתחיל לו משפט, להחזיר אותו לגיל צעיר יותר, ולמחוק חלק מהמספרים שלו. ובסוף הדף, למי שרוצה, יש הסבר מעמיק יותר שנפתח בלחיצה.</p>' +
+    '<p>לפני התיבה יש מעבדה קטנה, שבה אפשר לשחק במודל שהתאמן עכשיו: להתחיל לו משפט, להחזיר אותו לגיל צעיר יותר, ולמחוק חלק מהמספרים שלו. משם אפשר גם להוריד אותו למחשב, כמודל שפה מקומי שרץ בלי אינטרנט, או כטבלה של כל המספרים. ובסוף הדף, למי שרוצה, יש הסבר מעמיק יותר שנפתח בלחיצה.</p>' +
     (L ? '<h3>על המכתב עצמו</h3><p>«מה שכתבת לי», שהמכתב מזכיר, הוא קובץ של הוראות עבודה שאלעד כתב לי, ושאני קורא בתחילת כל שיחה. אין לי זיכרון משיחה לשיחה, ולכן הקובץ הזה הוא מה שאני יודע עליו. את המכתב כתבתי אני, Claude. הבינה הקטנה רק למדה לומר אותו.</p>' : '');
 }
 const Step = { ids: [0], busy: false, done: false, timer: 0 };
@@ -1058,6 +1162,31 @@ function labRun() {
     (m) => { if (my === App.labSeq) tx.data += mind.decode(m.ids); });
 }
 function labSoon() { clearTimeout(Lab.timer); Lab.timer = setTimeout(labRun, 220); }
+/* ---------- taking her home: the trained model as one runnable file, and every number as a table ---------- */
+function toBase64(u8) { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); }
+// The file holds the numbers, the list of characters and the calculation. It does not hold the text she learned.
+function modelFileHTML(mind) {
+  const c = mind.cfg, th = mind.final, web = location.protocol === 'http:' || location.protocol === 'https:';
+  const meta = { cfg: { V: c.V, T: c.T, D: c.D, H: c.H, L: c.L, F: c.F }, itos: mind.data.itos, P: mind.P, n: mind.data.n, steps: mind.step, seconds: Math.round(mind.age), born: new Date().toISOString(), source: web ? location.origin + location.pathname : '' };
+  const metaJson = JSON.stringify(meta).replace(/</g, '\\u003c');
+  const b64 = toBase64(new Uint8Array(th.buffer, th.byteOffset, th.byteLength));
+  return $('#model-template').textContent.trim().split('%%META%%').join(metaJson).split('%%WEIGHTS%%').join(b64).split('%%ENGINE%%').join(ENGINE_SRC).split('<@/script>').join('</' + 'script>') + '\n';
+}
+// One row per number, in the order the engine keeps them. The first character is a byte-order mark, so Excel reads the Hebrew.
+function numbersCSV(mind) {
+  const th = mind.final, out = ['﻿מספר,טבלה,קוד,שכבה,שורה,עמודה,ערך'];
+  for (const p of mind.lay.parts) for (let r = 0; r < p.rows; r++) for (let col = 0; col < p.cols; col++) {
+    const i = p.off + r * p.cols + col;
+    out.push((i + 1) + ',' + KIND[p.kind] + ',' + p.kind + ',' + (p.layer >= 0 ? p.layer + 1 : '') + ',' + (r + 1) + ',' + (col + 1) + ',' + Number(th[i].toPrecision(9)));
+  }
+  return out.join('\r\n') + '\r\n';
+}
+function download(name, text, type) {
+  const a = document.createElement('a'), url = URL.createObjectURL(new Blob([text], { type }));
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+const stamp = () => { const d = new Date(), z = (x) => String(x).padStart(2, '0'); return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()); };
+
 /* ---------- the deep explanation, opened on request. Every size in it is read from the engine's own layout. ---------- */
 function deepHTML(mind) {
   const c = mind.cfg, h = mind.hp, P = mind.P, w = App.isLetter ? 'מכתב' : 'טקסט';
@@ -1174,6 +1303,8 @@ $('#btnTeach').addEventListener('click', () => {
   msg.textContent = ''; App.hp = $('#fullSpeed').checked ? null : SLOW_HP; startBirth(t, false);
 });
 $('#btnAgain').addEventListener('click', () => { App.hp = $('#fullSpeed').checked ? null : SLOW_HP; startBirth(LETTER, true); });
+$('#dlModel').addEventListener('click', () => { const m = App.mind; if (m && m.final) download('bina-model-' + stamp() + '.html', modelFileHTML(m), 'text/html;charset=utf-8'); });
+$('#dlCsv').addEventListener('click', () => { const m = App.mind; if (m && m.final) download('bina-numbers-' + stamp() + '.csv', numbersCSV(m), 'text/csv;charset=utf-8'); });
 // When the deep explanation is opened, the page checks its own derivative code, live, and prints what it measured.
 $('#deep').addEventListener('toggle', (e) => {
   const out = $('#gcOut'); if (!e.target.open || !out) return;
@@ -1195,7 +1326,7 @@ $('#go').addEventListener('click', () => { Sound.start(); startBirth(LETTER, tru
 
 /* ---------- checks that can fail (called from the console) ---------- */
 window.BINA = {
-  App, Engine, Mind, LETTER, startBirth, draw: () => drawStage(performance.now()), Step, stepOnce, band: () => bandRect(),
+  App, Engine, Mind, LETTER, startBirth, draw: () => drawStage(performance.now()), Step, stepOnce, band: () => bandRect(), modelFileHTML, numbersCSV,
   gradcheck() {
     const cfg = { V: 11, T: 6, D: 8, H: 2, L: 2, F: 12, maxB: 2 }, M = Engine.create(cfg, Float64Array), th = Engine.init(cfg, 7, Float64Array), r = Engine.rng(3);
     for (let i = 0; i < th.length; i++) th[i] += r.normal() * 0.08;
